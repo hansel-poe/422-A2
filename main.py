@@ -122,7 +122,7 @@ def optimalPolicy(grid):
 
     return np.array(policy)
 
-
+#brute force algorithm for trying all values in arr
 def rewardBoundaryBruteForce(arr):
     for val in arr:
         print("Current iteration:", val)
@@ -135,8 +135,10 @@ def rewardBoundaryBruteForce(arr):
             print("Terminating program.....\n")
             return finalGrid,nIter
 
-#Main code starts here
 
+#Main code starts here
+#Uncomment parts accordingly
+#part a
 # v1 = val_iteration(reward,1, v0)
 # v2 = val_iteration(reward,1, v1)
 # v3 = val_iteration(reward,1, v2)
@@ -168,6 +170,7 @@ def rewardBoundaryBruteForce(arr):
 # print("Optimal Policy: ")
 # print(opt_policy)
 
+#part b
 arr = np.linspace(-0.16,0,17)
 arr2 = np.linspace(0,0.2, 21)
 print(arr2)
