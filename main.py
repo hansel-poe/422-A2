@@ -2,14 +2,11 @@ from copy import deepcopy
 
 import numpy as np
 
-# Create V table for the grid
-V = np.array([[0,0,0,1],
+# Create initial v table for the grid
+v0 = np.array([[0,0,0,1],
               [0,np.nan,0,-1],
               [0,0,0,0]])
 
-V_buffer = np.array([[0,0,0,1],
-              [0,np.nan,0,-1],
-              [0,0,0,0]])
 #reward function
 def r(i,j):
     if i == 0 and j == 3:
@@ -21,17 +18,6 @@ def r(i,j):
     else:
         return -0.1657
 
-x = np.zeros((3,4))
-print(x)
-
-#Function to update value of V grid using bellman equation
-def v(r, y):
-    for i in range(0,3):
-        for j in range(0,4):
-            x[i,j] = r(i,j)
-
-v(r,3)
-print(x)
 
 #transition function to determine new coords
 def move(i, j, direction):
@@ -61,13 +47,14 @@ def val_iteration(y, init_val):
             val_left = 0.8*(prev_val[move(i,j,'LEFT')]) + 0.1*(prev_val[move(i,j,'UP')]) + 0.1*(prev_val[move(i,j,'DOWN')])
             val_right = 0.8*(prev_val[move(i,j,'RIGHT')]) + 0.1*(prev_val[move(i,j,'UP')]) + 0.1*(prev_val[move(i,j,'DOWN')])
             #print("We are at ", i, j, " and vals are ", val_up, val_down, val_left, val_right)
-            new_val[i,j] = y * max(val_up,val_down,val_left,val_right)
+            new_val[i,j] = r(i,j) +  y * max(val_up,val_down,val_left,val_right)
+    #Non changing states
     new_val[0,3] = prev_val[0,3]
     new_val[1,3] = prev_val[1,3]
     new_val[1,1] = prev_val[1,1]
     return new_val
 
-v1 = val_iteration(1, x)
+v1 = val_iteration(1, v0)
 v2 = val_iteration(1, v1)
 v3 = val_iteration(1, v2)
 v4 = val_iteration(1, v3)
@@ -78,6 +65,7 @@ v8 = val_iteration(1, v7)
 v9 = val_iteration(1, v8)
 v10 = val_iteration(1, v9)
 
+print(v0, "\n")
 print(v1, "\n")
 print(v2, "\n")
 print(v3, "\n")
