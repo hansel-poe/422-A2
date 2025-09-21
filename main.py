@@ -95,7 +95,8 @@ def converge(r, y):
         if converged_yet:
             return curr_val, counter
         elif counter >= max_iter:
-            raise Exception("maxIter reached, terminating program")
+            print("maxIter reached, terminating program, returning the last grid")
+            return curr_val, counter
         else:
             prev_val = curr_val
 
@@ -121,6 +122,7 @@ def optimalPolicy(grid):
 
     return np.array(policy)
 
+
 def rewardBoundaryBruteForce(arr):
     for val in arr:
         print("Current iteration:", val)
@@ -129,7 +131,9 @@ def rewardBoundaryBruteForce(arr):
 
         print(finalGrid)
         print("# iter:", nIter, "\n")
-        print ("Converge: yes\n")
+        if(nIter == 1000):
+            print("Terminating program.....\n")
+            return finalGrid,nIter
 
 #Main code starts here
 
@@ -169,4 +173,11 @@ arr2 = np.linspace(0,0.2, 21)
 print(arr2)
 
 #rewardBoundaryBruteForce(arr)
-rewardBoundaryBruteForce(arr2) #Exception raised when iterating 0.03, so reward boundary is 0.02
+failGrid, nIter = rewardBoundaryBruteForce(arr2) #maxIter reached when iterating 0.03, so reward boundary is 0.02
+opt_policy_failGrid = optimalPolicy(failGrid)
+print("Optimal Policy for Fail Grid: ")
+print(opt_policy_failGrid)
+
+
+
+
