@@ -1,5 +1,5 @@
 from copy import deepcopy
-
+import math
 import numpy as np
 
 # Create initial v table for the grid
@@ -37,9 +37,8 @@ def move(i, j, direction):
         j = prev_j
     return i,j
 
-def val_iteration(y, init_val):
-    prev_val = deepcopy(init_val)
-    new_val = deepcopy(init_val)
+def val_iteration(y, prev_val):
+    new_val = deepcopy(prev_val)
     for i in range(0,3):
         for j in range(0,4):
             val_up = 0.8*(prev_val[move(i,j,'UP')]) + 0.1*(prev_val[move(i,j,'LEFT')]) + 0.1*(prev_val[move(i,j,'RIGHT')])
@@ -54,6 +53,29 @@ def val_iteration(y, init_val):
     new_val[1,1] = prev_val[1,1]
     return new_val
 
+#loop iterations until they converge at the 1st 4 decimal places
+def converge(y, init_val):
+    prev_val = init_val
+    counter = 0
+    while True:
+        converged_yet = True
+        counter = counter + 1
+        curr_val = val_iteration(y, prev_val)
+        for i in range(0,3):
+            for j in range(0,4):
+                if i == 1 and j == 1:
+                    continue
+                trunc_curr = math.trunc(curr_val[i,j]*10000)
+                trunc_prev = math.trunc(prev_val[i,j]*10000)
+                #compare 1st 4 decimal places
+                converged_yet = converged_yet and (trunc_curr == trunc_prev)
+        if converged_yet:
+            return counter
+        else:
+            prev_val = curr_val
+
+print(converge(1, v0))
+
 v1 = val_iteration(1, v0)
 v2 = val_iteration(1, v1)
 v3 = val_iteration(1, v2)
@@ -64,16 +86,13 @@ v7 = val_iteration(1, v6)
 v8 = val_iteration(1, v7)
 v9 = val_iteration(1, v8)
 v10 = val_iteration(1, v9)
+v11 = val_iteration(1, v10)
+v12 = val_iteration(1, v11)
+v13 = val_iteration(1, v12)
+v14 = val_iteration(1, v13)
+v15 = val_iteration(1, v14)
+v16 = val_iteration(1, v15)
+v17 = val_iteration(1, v16)
+v18 = val_iteration(1, v17)
 
-print(v0, "\n")
-print(v1, "\n")
-print(v2, "\n")
-print(v3, "\n")
-print(v4, "\n")
-print(v5, "\n")
-print(v6, "\n")
-print(v7, "\n")
-print(v8, "\n")
-print(v9, "\n")
-print(v10, "\n")
-
+print(v17,"\n",v18)
