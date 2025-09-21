@@ -9,7 +9,7 @@ v0 = np.array([[0,0,0,1],
               [0,0,0,0]])
 
 #reward function
-def r(i,j):
+def reward(i,j):
     if i == 0 and j == 3:
         return 1.0965
     elif i == 1 and j == 3:
@@ -19,6 +19,7 @@ def r(i,j):
     else:
         return -0.1657
 
+#Enums representing actions
 class Action(Enum):
     U = 0
     D = 1
@@ -43,13 +44,8 @@ def move(i, j, direction):
         j = prev_j
     return i,j
 
-def init_vals(reward):
-    for i in range(0,3):
-        for j in range(0,4):
-            v0[i,j] = reward(i,j)
-    return v0
 
-def val_iteration(y, prev_val):
+def val_iteration(r, y, prev_val):
     new_val = deepcopy(prev_val)
     for i in range(0,3):
         for j in range(0,4):
@@ -66,13 +62,13 @@ def val_iteration(y, prev_val):
     return new_val
 
 #loop iterations until they converge at the 1st 4 decimal places, returns the finished iteration and counter
-def converge(y):
+def converge(r, y):
     prev_val = v0
     counter = 0
     while True:
         converged_yet = True
         counter = counter + 1
-        curr_val = val_iteration(y, prev_val)
+        curr_val = val_iteration(r,y, prev_val)
         for i in range(0,3):
             for j in range(0,4):
                 if i == 1 and j == 1:
@@ -108,29 +104,29 @@ def optimalPolicy(grid):
 
     return np.array(policy)
 
-v1 = val_iteration(1, v0)
-v2 = val_iteration(1, v1)
-v3 = val_iteration(1, v2)
-v4 = val_iteration(1, v3)
-v5 = val_iteration(1, v4)
-v6 = val_iteration(1, v5)
-v7 = val_iteration(1, v6)
-v8 = val_iteration(1, v7)
-v9 = val_iteration(1, v8)
-v10 = val_iteration(1, v9)
-v11 = val_iteration(1, v10)
-v12 = val_iteration(1, v11)
-v13 = val_iteration(1, v12)
-v14 = val_iteration(1, v13)
-v15 = val_iteration(1, v14)
-v16 = val_iteration(1, v15)
-v17 = val_iteration(1, v16)
-v18 = val_iteration(1, v17)
+v1 = val_iteration(reward,1, v0)
+v2 = val_iteration(reward,1, v1)
+v3 = val_iteration(reward,1, v2)
+v4 = val_iteration(reward,1, v3)
+v5 = val_iteration(reward,1, v4)
+v6 = val_iteration(reward,1, v5)
+v7 = val_iteration(reward,1, v6)
+v8 = val_iteration(reward,1, v7)
+v9 = val_iteration(reward,1, v8)
+v10 = val_iteration(reward,1, v9)
+v11 = val_iteration(reward,1, v10)
+v12 = val_iteration(reward,1, v11)
+v13 = val_iteration(reward,1, v12)
+v14 = val_iteration(reward,1, v13)
+v15 = val_iteration(reward,1, v14)
+v16 = val_iteration(reward,1, v15)
+v17 = val_iteration(reward,1, v16)
+v18 = val_iteration(reward,1, v17)
 print("v18:")
 print(v18, "\n")
 
 #test our code
-final_grid, n_iter = converge(1)
+final_grid, n_iter = converge(reward, 1)
 opt_policy = optimalPolicy(final_grid)
 
 print("Result:")
@@ -138,5 +134,4 @@ print(final_grid)
 print("# iter:", n_iter, "\n")
 print("Optimal Policy: ")
 print(opt_policy)
-
 
