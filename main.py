@@ -37,6 +37,12 @@ def move(i, j, direction):
         j = prev_j
     return i,j
 
+def init_vals(reward):
+    for i in range(0,3):
+        for j in range(0,4):
+            v0[i,j] = reward(i,j)
+    return v0
+
 def val_iteration(y, prev_val):
     new_val = deepcopy(prev_val)
     for i in range(0,3):
@@ -54,8 +60,8 @@ def val_iteration(y, prev_val):
     return new_val
 
 #loop iterations until they converge at the 1st 4 decimal places
-def converge(y, init_val):
-    prev_val = init_val
+def converge(y):
+    prev_val = init_vals(r)
     counter = 0
     while True:
         converged_yet = True
@@ -65,8 +71,8 @@ def converge(y, init_val):
             for j in range(0,4):
                 if i == 1 and j == 1:
                     continue
-                trunc_curr = math.trunc(curr_val[i,j]*10000)
-                trunc_prev = math.trunc(prev_val[i,j]*10000)
+                trunc_curr = math.trunc(curr_val[i,j]*10000)/10000
+                trunc_prev = math.trunc(prev_val[i,j]*10000)/10000
                 #compare 1st 4 decimal places
                 converged_yet = converged_yet and (trunc_curr == trunc_prev)
         if converged_yet:
@@ -74,7 +80,7 @@ def converge(y, init_val):
         else:
             prev_val = curr_val
 
-print(converge(1, v0))
+print(converge(1))
 
 v1 = val_iteration(1, v0)
 v2 = val_iteration(1, v1)
@@ -96,3 +102,4 @@ v17 = val_iteration(1, v16)
 v18 = val_iteration(1, v17)
 
 print(v17,"\n",v18)
+print(v17[0,3])
