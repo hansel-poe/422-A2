@@ -2,6 +2,7 @@ from copy import deepcopy
 import math
 import numpy as np
 from enum import Enum
+from functools import partial
 
 # Create initial v table for the grid
 v0 = np.array([[0,0,0,1],
@@ -16,6 +17,19 @@ def reward(i,j):
         return -1.3182
     elif i == 1 and j == 1:
         return np.nan
+    else:
+        return -0.1657
+
+#Reward customized for (2, 0)/(1,1) in lecture
+def rewardCustom(val,i,j):
+    if i == 0 and j == 3:
+        return 1.0965
+    elif i == 1 and j == 3:
+        return -1.3182
+    elif i == 1 and j == 1:
+        return np.nan
+    elif i == 2 and j == 0:
+        return val
     else:
         return -0.1657
 
@@ -65,6 +79,7 @@ def val_iteration(r, y, prev_val):
 def converge(r, y):
     prev_val = v0
     counter = 0
+    max_iter = 1000
     while True:
         converged_yet = True
         counter = counter + 1
@@ -79,6 +94,8 @@ def converge(r, y):
                 converged_yet = converged_yet and (trunc_curr == trunc_prev)
         if converged_yet:
             return curr_val, counter
+        elif counter >= max_iter:
+            raise Exception("maxIter reached, terminating program")
         else:
             prev_val = curr_val
 
@@ -104,34 +121,52 @@ def optimalPolicy(grid):
 
     return np.array(policy)
 
-v1 = val_iteration(reward,1, v0)
-v2 = val_iteration(reward,1, v1)
-v3 = val_iteration(reward,1, v2)
-v4 = val_iteration(reward,1, v3)
-v5 = val_iteration(reward,1, v4)
-v6 = val_iteration(reward,1, v5)
-v7 = val_iteration(reward,1, v6)
-v8 = val_iteration(reward,1, v7)
-v9 = val_iteration(reward,1, v8)
-v10 = val_iteration(reward,1, v9)
-v11 = val_iteration(reward,1, v10)
-v12 = val_iteration(reward,1, v11)
-v13 = val_iteration(reward,1, v12)
-v14 = val_iteration(reward,1, v13)
-v15 = val_iteration(reward,1, v14)
-v16 = val_iteration(reward,1, v15)
-v17 = val_iteration(reward,1, v16)
-v18 = val_iteration(reward,1, v17)
-print("v18:")
-print(v18, "\n")
+def rewardBoundaryBruteForce(arr):
+    for val in arr:
+        print("Current iteration:", val)
+        customReward = partial(rewardCustom, val)#fill the first argument with val
+        finalGrid, nIter = converge(customReward,1)
 
-#test our code
-final_grid, n_iter = converge(reward, 1)
-opt_policy = optimalPolicy(final_grid)
+        print(finalGrid)
+        print("# iter:", nIter, "\n")
+        print ("Converge: yes\n")
 
-print("Result:")
-print(final_grid)
-print("# iter:", n_iter, "\n")
-print("Optimal Policy: ")
-print(opt_policy)
+#Main code starts here
 
+# v1 = val_iteration(reward,1, v0)
+# v2 = val_iteration(reward,1, v1)
+# v3 = val_iteration(reward,1, v2)
+# v4 = val_iteration(reward,1, v3)
+# v5 = val_iteration(reward,1, v4)
+# v6 = val_iteration(reward,1, v5)
+# v7 = val_iteration(reward,1, v6)
+# v8 = val_iteration(reward,1, v7)
+# v9 = val_iteration(reward,1, v8)
+# v10 = val_iteration(reward,1, v9)
+# v11 = val_iteration(reward,1, v10)
+# v12 = val_iteration(reward,1, v11)
+# v13 = val_iteration(reward,1, v12)
+# v14 = val_iteration(reward,1, v13)
+# v15 = val_iteration(reward,1, v14)
+# v16 = val_iteration(reward,1, v15)
+# v17 = val_iteration(reward,1, v16)
+# v18 = val_iteration(reward,1, v17)
+# print("v18:")
+# print(v18, "\n")
+#
+# #test our code
+# final_grid, n_iter = converge(reward, 1)
+# opt_policy = optimalPolicy(final_grid)
+#
+# print("Result:")
+# print(final_grid)
+# print("# iter:", n_iter, "\n")
+# print("Optimal Policy: ")
+# print(opt_policy)
+
+arr = np.linspace(-0.16,0,17)
+arr2 = np.linspace(0,0.2, 21)
+print(arr2)
+
+#rewardBoundaryBruteForce(arr)
+rewardBoundaryBruteForce(arr2) #Exception raised when iterating 0.03, so reward boundary is 0.02
