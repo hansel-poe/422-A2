@@ -1,6 +1,7 @@
 from copy import deepcopy
 import math
 import numpy as np
+from enum import Enum
 
 # Create initial v table for the grid
 v0 = np.array([[0,0,0,1],
@@ -18,6 +19,11 @@ def r(i,j):
     else:
         return -0.1657
 
+class Action(Enum):
+    U = 0
+    D = 1
+    L = 2
+    R = 3
 
 #transition function to determine new coords
 def move(i, j, direction):
@@ -59,9 +65,9 @@ def val_iteration(y, prev_val):
     new_val[1,1] = prev_val[1,1]
     return new_val
 
-#loop iterations until they converge at the 1st 4 decimal places
+#loop iterations until they converge at the 1st 4 decimal places, returns the finished iteration and counter
 def converge(y):
-    prev_val = init_vals(r)
+    prev_val = v0
     counter = 0
     while True:
         converged_yet = True
@@ -76,11 +82,31 @@ def converge(y):
                 #compare 1st 4 decimal places
                 converged_yet = converged_yet and (trunc_curr == trunc_prev)
         if converged_yet:
-            return counter
+            return curr_val, counter
         else:
             prev_val = curr_val
 
-print(converge(1))
+#find optimal policy
+def optimalPolicy(grid):
+    policy = [] #list of empty str
+    for i in range(0, 3):
+        policy.append([])
+        for j in range(0, 4):
+            val_up = 0.8 * (grid[move(i, j, 'UP')]) + 0.1 * (grid[move(i, j, 'LEFT')]) + 0.1 * (
+            grid[move(i, j, 'RIGHT')])
+            val_down = 0.8 * (grid[move(i, j, 'DOWN')]) + 0.1 * (grid[move(i, j, 'LEFT')]) + 0.1 * (
+            grid[move(i, j, 'RIGHT')])
+            val_left = 0.8 * (grid[move(i, j, 'LEFT')]) + 0.1 * (grid[move(i, j, 'UP')]) + 0.1 * (
+            grid[move(i, j, 'DOWN')])
+            val_right = 0.8 * (grid[move(i, j, 'RIGHT')]) + 0.1 * (grid[move(i, j, 'UP')]) + 0.1 * (
+            grid[move(i, j, 'DOWN')])
+
+            policy[i].append(Action(np.argmax([val_up, val_down, val_left, val_right])).name)
+    policy[0][3] = "-"
+    policy[1][3] = "-"
+    policy[1][1] = "-"
+
+    return np.array(policy)
 
 v1 = val_iteration(1, v0)
 v2 = val_iteration(1, v1)
@@ -100,6 +126,17 @@ v15 = val_iteration(1, v14)
 v16 = val_iteration(1, v15)
 v17 = val_iteration(1, v16)
 v18 = val_iteration(1, v17)
+print("v18:")
+print(v18, "\n")
 
-print(v17,"\n",v18)
-print(v17[0,3])
+#test our code
+final_grid, n_iter = converge(1)
+opt_policy = optimalPolicy(final_grid)
+
+print("Result:")
+print(final_grid)
+print("# iter:", n_iter, "\n")
+print("Optimal Policy: ")
+print(opt_policy)
+
+
