@@ -103,9 +103,15 @@ def b_iter(prev_b, e, a):
 
     return new_b
 
-
+#Compute new belief states from sequence of actions and observations, s0 as a start state is optional
 def b_sequence(actions, observations, **kwargs):
-    prev_b = b0
+    if 's0' in kwargs:
+        prev_b = np.zeros((3,4))
+        prev_b[1,1] = np.nan
+        prev_b[kwargs['s0']] = 1
+    else:
+        prev_b = b0
+
     for i in range(len(actions)):
         curr_b = b_iter(prev_b, observations[i], actions[i])
         prev_b = curr_b
@@ -130,7 +136,24 @@ result2 = b_sequence(a2, e2)
 print("Grid for ['LEFT', 'DOWN', 'RIGHT'] and [1 walls, 1 walls, 1 walls]:\n")
 print(result2, "\n")
 print(np.round(result2, 3),'\n')
-print(np.nansum(result2))
+
+#Third Sequence
+a3 =['LEFT', 'RIGHT', 'DOWN']
+e3 =[Evidence.TWOWALLS, Evidence.TWOWALLS, Evidence.END]
+result3 = b_sequence(a3, e3, s0= (2,2)) #(0,2) in problem desc
+
+print("Grid for ['LEFT', 'RIGHT', 'DOWN'] and [2 walls, 2 walls, end]:\n")
+print(result3, "\n")
+print(np.round(result3, 3),'\n')
+
+#Fourth Sequence
+a4 =['RIGHT', 'DOWN', 'DOWN', 'LEFT']
+e4 =[Evidence.ONEWALL, Evidence.ONEWALL, Evidence.TWOWALLS, Evidence.ONEWALL]
+result4 = b_sequence(a4, e4, s0= (2,0)) #(0,0) in problem desc
+
+print("Grid for ['RIGHT', 'DOWN', 'DOWN', 'LEFT'] and [1 wall, 1 wall, 2 walls, 1 wall]:\n")
+print(result4, "\n")
+print(np.round(result4, 3),'\n')
 
 
 
