@@ -1,9 +1,6 @@
 from copy import deepcopy
-from selectors import SelectSelector
-
 import numpy as np
 from enum import Enum
-print("This is POMDP File")
 
 #starting gr9d
 b0 = np.array([[0.111, 0.111, 0.111, 0.000],
@@ -107,7 +104,33 @@ def b_iter(prev_b, e, a):
     return new_b
 
 
+def b_sequence(actions, observations, **kwargs):
+    prev_b = b0
+    for i in range(len(actions)):
+        curr_b = b_iter(prev_b, observations[i], actions[i])
+        prev_b = curr_b
 
+    return prev_b
+
+
+#First sequence
+a1 =['UP', 'LEFT', 'UP']
+e1 =[Evidence.TWOWALLS, Evidence.TWOWALLS, Evidence.TWOWALLS]
+result1 = b_sequence(a1, e1)
+
+print("Grid for ['UP', 'LEFT', 'UP'] and [2 walls, 2 walls, 2 walls]:\n")
+print(result1, "\n")
+print(np.round(result1, 3),'\n')
+
+#Second sequence
+a2 =['LEFT', 'DOWN', 'RIGHT']
+e2 =[Evidence.ONEWALL, Evidence.ONEWALL, Evidence.ONEWALL]
+result2 = b_sequence(a2, e2)
+
+print("Grid for ['LEFT', 'DOWN', 'RIGHT'] and [1 walls, 1 walls, 1 walls]:\n")
+print(result2, "\n")
+print(np.round(result2, 3),'\n')
+print(np.nansum(result2))
 
 
 
